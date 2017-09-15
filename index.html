@@ -31,12 +31,10 @@
   map.addLayer(osm);
     
   url = "https://oep.iks.cs.ovgu.de/api/v0/advanced/search/"
-  data = { "query": {"fields": ["id", {"type": "function", "function": "ST_AsText", "operands":[{"type": "function", "function": "ST_Transform", "operands": [{"type": "column", "column": "geom"}, 4326]}]}], "from":{"type": "table", "table": "buergen_geo_district", "schema":"model_draft"}}}
+  data = { "query": JSON.stringify({"fields": ["id", {"type": "function", "function": "ST_AsText", "operands":[{"type": "function", "function": "ST_Transform", "operands": [{"type": "column", "column": "geom"}, 4326]}]}], "from":{"type": "table", "table": "buergen_geo_district", "schema":"model_draft"}})}
   $.ajax({
     type: "POST",
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    dataType:'json',
     url: url,
     data: data,
     success: function(x){temp=x}
