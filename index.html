@@ -29,16 +29,12 @@
   // start the map in South-East England
   map.setView(new L.LatLng(51.3, 0.7),9);
   map.addLayer(osm);
-
-  token = prompt("Your token");
-  url = "https://oep.iks.cs.ovgu.de/api/v0/schema/model_draft/tables/buergen_geo_district/"
-  data = { "query": {"fields": ["id", {"type": "function", "function": "ST_AsText", "operands":[{"type": "function", "function": "ST_Transform", "operands": [{"type": "column", "column": "geom"}, 4326]}]}], "from":{"type": "table", "table": "buergen_geo_district", "schema":"model_draft"}}}
+    
+  url = "https://oep.iks.cs.ovgu.de/api/v0/advanced/search/"
+  data = { "query": JSON.stringify({"fields": ["id", {"type": "function", "function": "ST_AsText", "operands":[{"type": "function", "function": "ST_Transform", "operands": [{"type": "column", "column": "geom"}, 4326]}]}], "from":{"type": "table", "table": "buergen_geo_district", "schema":"model_draft"}})}
   $.ajax({
     type: "POST",
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': token
-    },
+    dataType:'json',
     url: url,
     data: data,
     success: function(x){temp=x}
