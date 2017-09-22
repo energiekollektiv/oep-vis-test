@@ -14,33 +14,65 @@
 </head>
 <body>
 
-  <div id="map"></div>
+<div id="map"></div>
+<script>
 
-  <script>
+// set up the map
+map = new L.Map('map');
 
-  // set up the map
-  map = new L.Map('map');
+// create the tile layer with correct attribution
+var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+var osm = new L.TileLayer(osmUrl, {minZoom: 6, maxZoom: 12, attribution: osmAttrib});
 
-  // create the tile layer with correct attribution
-  var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-  var osm = new L.TileLayer(osmUrl, {minZoom: 6, maxZoom: 12, attribution: osmAttrib});
+// start the map in South-East England
+map.setView(new L.LatLng(51.3, 0.7),9);
+map.addLayer(osm);
 
-  // start the map in South-East England
-  map.setView(new L.LatLng(51.3, 0.7),9);
-  map.addLayer(osm);
-    
-  url = "https://oep.iks.cs.ovgu.de/api/v0/advanced/search/"
-  data = { "query": JSON.stringify({"fields": ["id", {"type": "function", "function": "ST_AsText", "operands":[{"type": "function", "function": "ST_Transform", "operands": [{"type": "column", "column": "geom"}, 4326]}]}], "from":{"type": "table", "table": "buergen_geo_district", "schema":"model_draft"}})}
+url = "https://oep.iks.cs.ovgu.de/api/v0/advanced/search/"
+data = {
+  "query": {
+    "fields": ["id", {
+      "type": "function",
+      "function": "ST_AsText",
+      "operands": [{
+        "type": "function",
+        "function": "ST_Transform",
+        "operands": [{
+          "type": "column",
+          "column": "geom"
+        }, 4326]
+      }]
+    }],
+    "from": {
+      "type": "table",
+      "table": "buergen_geo_district",
+      "schema": "model_draft"
+    }
+  }
+}
+
+function processResults(result) {
+  alert(result[0]);
+  return result;
+}
+
+getResults(processResults);
+
+function getResults(callback) {
   $.ajax({
     type: "POST",
     dataType:'json',
     url: url,
     data: data,
-    success: function(x){temp=x}
+    success: callback,
+    error: function(xhr, status, error) {
+               alert(xhr.responseText);
+		}
   });
+}
+
 
   </script>
 </body>
 </html>
-
